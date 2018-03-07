@@ -589,7 +589,7 @@ namespace PortChatBot
                                     DButil.HistoryLog("* dlg.dlgId : "+ dlg.dlgId + " | dlg.cardText : " + dlg.cardText);
 
                                     //  userLoginOk
-                                    if (dlg.cardTitle.Equals("userLoginOk")) //  주문내역 dialog 일시..
+                                    if (dlg.cardTitle.Equals("Login OK")) //  주문내역 dialog 일시..
                                     {
 
                                         DButil.HistoryLog("*** activity.Conversation.Id : " + activity.Conversation.Id + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity); 
@@ -601,7 +601,6 @@ namespace PortChatBot
                                         strComment[1] = userData.GetProperty<string>("name");
                                         strComment[2] = userData.GetProperty<string>("workerid");
                                         strComment[3] = userData.GetProperty<string>("equipment_no");
-                                        //strComment[2] = db.SelectUserHistoryComment(activity.Conversation.Id, "order");
                                         DButil.HistoryLog("*** strComment[0] : " + strComment[0] + " | strComment[1] : " + strComment[1] + " | strComment[2] : " + strComment[2]);
 
                                         optionComment = strComment[0] + "," + strComment[1] + "님(" + strComment[2] + "), " + strComment[3];
@@ -611,7 +610,7 @@ namespace PortChatBot
                                     }
 
                                     //  weatherInfo
-                                    if (dlg.cardTitle.Equals("weatherInfo")) //  주문내역 dialog 일시..
+                                    if (dlg.cardTitle.Equals("Weather Info")) //  주문내역 dialog 일시..
                                     {
                                         DButil.HistoryLog("*** dlg.cardTitle : " + dlg.cardTitle + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity);
                                         //  GET weatherInfo..
@@ -637,11 +636,17 @@ namespace PortChatBot
                                             }
                                             else
                                             {
-                                                fullentity = "userFail";
-                                                DButil.HistoryLog("*** fullentity : " + fullentity);
+                                                //fullentity = "userFail";
+                                                DButil.HistoryLog("*** weatherInfo : NO weatherList !");
                                             }
                                         }
+                                        //DButil.HistoryLog("*** HH : "+DateTime.Now.ToString("HH"));
+                                    }
 
+                                    //  Accident Analysis / Trend
+                                    if (dlg.cardTitle.Equals("Accident Analysis / Trend")) //  주문내역 dialog 일시..
+                                    {
+                                        //
                                     }
 
                                     if (activity.ChannelId.Equals("facebook") && string.IsNullOrEmpty(dlg.cardTitle) && dlg.dlgType.Equals(TEXTDLG))
@@ -650,7 +655,6 @@ namespace PortChatBot
                                         commonReply.Type = "message";
                                         DButil.HistoryLog("facebook  card Text : " + dlg.cardText);
                                         commonReply.Text = dlg.cardText;
-
                                     }
                                     else
                                     {
