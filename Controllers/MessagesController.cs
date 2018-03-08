@@ -394,24 +394,25 @@ namespace PortChatBot
                                         userData.SetProperty<string>("workerid", hrList[0].workerid);
                                         userData.SetProperty<string>("name", hrList[0].name);
                                         userData.SetProperty<string>("eqp_typ", hrList[0].eqp_typ);
+                                        userData.SetProperty<string>("eqp_typ_name", hrList[0].eqp_typ_name);                                        
                                         userData.SetProperty<string>("equipment_no", hrList[0].equipment_no);
                                         userData.SetProperty<string>("ernam", hrList[0].ernam);
 
                                         await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
 
-                                        fullentity = "userOk";
+                                        fullentity = "login,ok";
                                         DButil.HistoryLog("*** fullentity : " + fullentity);
                                     } 
                                     else
                                     {
-                                        fullentity = "userFail";
+                                        fullentity = "fail,login";
                                         DButil.HistoryLog("*** fullentity : " + fullentity);
                                     }
                                 }
                                 else
                                 {
                                     //  조회후 사원 번호 존재하지 않을 경우..  
-                                    fullentity = "userFail";
+                                    fullentity = "fail,login";
                                     DButil.HistoryLog("*** loginStatus : N | name : " + userData.GetProperty<string>("name") + " | workerid : " + userData.GetProperty<string>("workerid"));                                    
                                     DButil.HistoryLog("*** fullentity : " + fullentity);
                                 }
@@ -419,7 +420,7 @@ namespace PortChatBot
                             }
                             else
                             {
-                                fullentity = "userOk";
+                                fullentity = "login,ok";
                                 DButil.HistoryLog("*** loginStatus : " + loginStatus + " | name : " + userData.GetProperty<string>("name") + "| workerid : " + userData.GetProperty<string>("workerid"));
                                 DButil.HistoryLog("*** fullentity : " + fullentity);
                             }
@@ -586,7 +587,7 @@ namespace PortChatBot
                                 {
                                     //DButil.HistoryLog("* facebook dlg.dlgId : " + dlg.dlgId);
                                     DButil.HistoryLog("* activity.ChannelId : " + activity.ChannelId);
-                                    DButil.HistoryLog("* dlg.dlgId : "+ dlg.dlgId + " | dlg.cardText : " + dlg.cardText);
+                                    DButil.HistoryLog("* dlg.dlgId : "+ dlg.dlgId + " | dlg.cardTitle : " + dlg.cardTitle + " | dlg.cardText : " + dlg.cardText);
 
                                     //  userLoginOk
                                     if (dlg.cardTitle.Equals("Login OK")) //  주문내역 dialog 일시..
@@ -643,8 +644,17 @@ namespace PortChatBot
                                         //DButil.HistoryLog("*** HH : "+DateTime.Now.ToString("HH"));
                                     }
 
-                                    //  Accident Analysis / Trend
-                                    if (dlg.cardTitle.Equals("Accident Analysis / Trend")) //  주문내역 dialog 일시..
+                                    //  Accident Analysis
+                                    if (dlg.cardTitle.Equals("Accident Analysis"))
+                                    {
+                                        //
+                                        DButil.HistoryLog("*** Accident Analysis - tmn_cod:" + userData.GetProperty<string>("tmn_cod")+ " | eqp_typ_name:" + userData.GetProperty<string>("eqp_typ_name"));
+                                        //userData.GetProperty<string>("eqp_typ_name");
+
+                                    }
+
+                                    //  Accident Trend
+                                    if (dlg.cardTitle.Equals("Accident Trend"))
                                     {
                                         //
                                     }
@@ -653,7 +663,7 @@ namespace PortChatBot
                                     {
                                         commonReply.Recipient = activity.From;
                                         commonReply.Type = "message";
-                                        DButil.HistoryLog("facebook  card Text : " + dlg.cardText);
+                                        DButil.HistoryLog("facebook card Text : " + dlg.cardText);
                                         commonReply.Text = dlg.cardText;
                                     }
                                     else

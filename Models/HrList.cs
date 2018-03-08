@@ -14,6 +14,7 @@ namespace PortChatBot.Models
         public string workerid;
         public string name;
         public string eqp_typ;
+        public string eqp_typ_name;
         public string equipment_no;
         public string ernam;
         public string erdat;
