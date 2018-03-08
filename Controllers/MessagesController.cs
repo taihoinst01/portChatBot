@@ -250,8 +250,8 @@ namespace PortChatBot
 
                 DButil.HistoryLog("* activity.Type == ActivityTypes.Message ");
                 // userData (epkim)
-                StateClient stateClient = activity.GetStateClient();
-                BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
+                //StateClient stateClient = activity.GetStateClient();
+                //BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
 
                 //activity.ChannelId = "facebook";
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
@@ -372,58 +372,58 @@ namespace PortChatBot
 
                         if (fullentity.Equals(""))
                         {
-                            var loginStatus = userData.GetProperty<string>("loginStatus");
-                            loginStatus = "N";
-                            DButil.HistoryLog("*** loginStatus : " + loginStatus);
-                            if (loginStatus.Equals("N"))
-                            {
-                                DButil.HistoryLog("*** loginStatus : N | activity.ChannelId : " + activity.ChannelId + " | activity.From.Id : " + activity.From.Id);
-                                DButil.HistoryLog("*** orgMent : " + orgMent);
-                                hrList = db.SelectHrInfo(orgMent);
+                            //var loginStatus = userData.GetProperty<string>("loginStatus");
+                            //loginStatus = "N";
+                            //DButil.HistoryLog("*** loginStatus : " + loginStatus);
+                            //if (loginStatus.Equals("N"))
+                            //{
+                            //    DButil.HistoryLog("*** loginStatus : N | activity.ChannelId : " + activity.ChannelId + " | activity.From.Id : " + activity.From.Id);
+                            //    DButil.HistoryLog("*** orgMent : " + orgMent);
+                            //    hrList = db.SelectHrInfo(orgMent);
 
-                                if (hrList != null)
-                                {
-                                    if (hrList.Count > 0 && hrList[0].name != null)
-                                    {
-                                        DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name);
+                            //    if (hrList != null)
+                            //    {
+                            //        if (hrList.Count > 0 && hrList[0].name != null)
+                            //        {
+                            //            DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name);
 
-                                        userData.SetProperty<string>("loginStatus", "Y");
-                                        userData.SetProperty<string>("tmn_cod", hrList[0].tmn_cod);
-                                        userData.SetProperty<string>("comp", hrList[0].comp);
-                                        userData.SetProperty<string>("part", hrList[0].part);
-                                        userData.SetProperty<string>("workerid", hrList[0].workerid);
-                                        userData.SetProperty<string>("name", hrList[0].name);
-                                        userData.SetProperty<string>("eqp_typ", hrList[0].eqp_typ);
-                                        userData.SetProperty<string>("eqp_typ_name", hrList[0].eqp_typ_name);                                        
-                                        userData.SetProperty<string>("equipment_no", hrList[0].equipment_no);
-                                        userData.SetProperty<string>("ernam", hrList[0].ernam);
+                            //            userData.SetProperty<string>("loginStatus", "Y");
+                            //            userData.SetProperty<string>("tmn_cod", hrList[0].tmn_cod);
+                            //            userData.SetProperty<string>("comp", hrList[0].comp);
+                            //            userData.SetProperty<string>("part", hrList[0].part);
+                            //            userData.SetProperty<string>("workerid", hrList[0].workerid);
+                            //            userData.SetProperty<string>("name", hrList[0].name);
+                            //            userData.SetProperty<string>("eqp_typ", hrList[0].eqp_typ);
+                            //            userData.SetProperty<string>("eqp_typ_name", hrList[0].eqp_typ_name);                                        
+                            //            userData.SetProperty<string>("equipment_no", hrList[0].equipment_no);
+                            //            userData.SetProperty<string>("ernam", hrList[0].ernam);
 
-                                        await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
+                            //            await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
 
-                                        fullentity = "login,ok";
-                                        DButil.HistoryLog("*** fullentity : " + fullentity);
-                                    } 
-                                    else
-                                    {
-                                        fullentity = "fail,login";
-                                        DButil.HistoryLog("*** fullentity : " + fullentity);
-                                    }
-                                }
-                                else
-                                {
-                                    //  조회후 사원 번호 존재하지 않을 경우..  
-                                    fullentity = "fail,login";
-                                    DButil.HistoryLog("*** loginStatus : N | name : " + userData.GetProperty<string>("name") + " | workerid : " + userData.GetProperty<string>("workerid"));                                    
-                                    DButil.HistoryLog("*** fullentity : " + fullentity);
-                                }
+                            //            fullentity = "login,ok";
+                            //            DButil.HistoryLog("*** fullentity : " + fullentity);
+                            //        } 
+                            //        else
+                            //        {
+                            //            fullentity = "fail,login";
+                            //            DButil.HistoryLog("*** fullentity : " + fullentity);
+                            //        }
+                            //    }
+                            //    else
+                            //    {
+                            //        //  조회후 사원 번호 존재하지 않을 경우..  
+                            //        fullentity = "fail,login";
+                            //        DButil.HistoryLog("*** loginStatus : N | name : " + userData.GetProperty<string>("name") + " | workerid : " + userData.GetProperty<string>("workerid"));                                    
+                            //        DButil.HistoryLog("*** fullentity : " + fullentity);
+                            //    }
 
-                            }
-                            else
-                            {
-                                fullentity = "login,ok";
-                                DButil.HistoryLog("*** loginStatus : " + loginStatus + " | name : " + userData.GetProperty<string>("name") + "| workerid : " + userData.GetProperty<string>("workerid"));
-                                DButil.HistoryLog("*** fullentity : " + fullentity);
-                            }
+                            //}
+                            //else
+                            //{
+                            //    fullentity = "login,ok";
+                            //    DButil.HistoryLog("*** loginStatus : " + loginStatus + " | name : " + userData.GetProperty<string>("name") + "| workerid : " + userData.GetProperty<string>("workerid"));
+                            //    DButil.HistoryLog("*** fullentity : " + fullentity);
+                            //}
 
 
 
@@ -590,25 +590,25 @@ namespace PortChatBot
                                     DButil.HistoryLog("* dlg.dlgId : "+ dlg.dlgId + " | dlg.cardTitle : " + dlg.cardTitle + " | dlg.cardText : " + dlg.cardText);
 
                                     //  userLoginOk
-                                    if (dlg.cardTitle.Equals("Login OK")) //  주문내역 dialog 일시..
-                                    {
+                                    //if (dlg.cardTitle.Equals("Login OK")) //  주문내역 dialog 일시..
+                                    //{
 
-                                        DButil.HistoryLog("*** activity.Conversation.Id : " + activity.Conversation.Id + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity); 
+                                    //    DButil.HistoryLog("*** activity.Conversation.Id : " + activity.Conversation.Id + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity); 
 
-                                        string[] strComment = new string[4];
-                                        string optionComment = "";
+                                    //    string[] strComment = new string[4];
+                                    //    string optionComment = "";
 
-                                        strComment[0] = userData.GetProperty<string>("comp");
-                                        strComment[1] = userData.GetProperty<string>("name");
-                                        strComment[2] = userData.GetProperty<string>("workerid");
-                                        strComment[3] = userData.GetProperty<string>("equipment_no");
-                                        DButil.HistoryLog("*** strComment[0] : " + strComment[0] + " | strComment[1] : " + strComment[1] + " | strComment[2] : " + strComment[2]);
+                                    //    strComment[0] = userData.GetProperty<string>("comp");
+                                    //    strComment[1] = userData.GetProperty<string>("name");
+                                    //    strComment[2] = userData.GetProperty<string>("workerid");
+                                    //    strComment[3] = userData.GetProperty<string>("equipment_no");
+                                    //    DButil.HistoryLog("*** strComment[0] : " + strComment[0] + " | strComment[1] : " + strComment[1] + " | strComment[2] : " + strComment[2]);
 
-                                        optionComment = strComment[0] + "," + strComment[1] + "님(" + strComment[2] + "), " + strComment[3];
-                                        //optionComment = strComment[0] + "/" + strComment[1] + "/" + fullentity;
-                                        dlg.cardText = dlg.cardText.Replace("#OPTIONS", optionComment);
+                                    //    optionComment = strComment[0] + "," + strComment[1] + "님(" + strComment[2] + "), " + strComment[3];
+                                    //    //optionComment = strComment[0] + "/" + strComment[1] + "/" + fullentity;
+                                    //    dlg.cardText = dlg.cardText.Replace("#OPTIONS", optionComment);
 
-                                    }
+                                    //}
 
                                     //  weatherInfo
                                     if (dlg.cardTitle.Equals("Weather Info")) //  주문내역 dialog 일시..
@@ -648,7 +648,7 @@ namespace PortChatBot
                                     if (dlg.cardTitle.Equals("Accident Analysis"))
                                     {
                                         //
-                                        DButil.HistoryLog("*** Accident Analysis - tmn_cod:" + userData.GetProperty<string>("tmn_cod")+ " | eqp_typ_name:" + userData.GetProperty<string>("eqp_typ_name"));
+                                        //DButil.HistoryLog("*** Accident Analysis - tmn_cod:" + userData.GetProperty<string>("tmn_cod")+ " | eqp_typ_name:" + userData.GetProperty<string>("eqp_typ_name"));
                                         //userData.GetProperty<string>("eqp_typ_name");
 
                                     }
