@@ -1150,7 +1150,7 @@ namespace PortChatBot.DB
                 cmd.Connection = conn;
 
                 cmd.CommandText += "	SELECT ";
-                cmd.CommandText += "        TMN_COD, COMP, PART, WORKERID, NAME, EQP_TYP, EQUIPMENT_NO, ERNAM, ERDAT, ERZET ";
+                cmd.CommandText += "        TMN_COD, COMP, PART, WORKERID, NAME, EQP_TYP, EQP_TYP_NAME, EQUIPMENT_NO, ERNAM, ERDAT, ERZET ";
                 cmd.CommandText += "        FROM PORT_HR";
                 cmd.CommandText += " 	WHERE WORKERID = '" + workerId + "'";
                 cmd.Parameters.AddWithValue("@workerId", workerId);
@@ -1168,6 +1168,7 @@ namespace PortChatBot.DB
                     hrList.workerid = rdr["WORKERID"] as string;
                     hrList.name = rdr["NAME"] as string;
                     hrList.eqp_typ = rdr["EQP_TYP"] as string;
+                    hrList.eqp_typ_name = rdr["EQP_TYP_NAME"] as string;
                     hrList.equipment_no = rdr["EQUIPMENT_NO"] as string;
                     hrList.ernam = rdr["ERNAM"] as string;
                     hrList.erdat = rdr["ERDAT"] as string;
@@ -1178,6 +1179,45 @@ namespace PortChatBot.DB
                 return result;
             }
 
+        }
+
+        public List<AnalysisList> SelectAnalysisInfo(string tmnCod, string eqpTypNam)
+        {
+            SqlDataReader rdr = null;
+            List<AnalysisList> result = new List<AnalysisList>();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conn;
+
+                cmd.CommandText += "    SELECT ";
+                cmd.CommandText += "        TMN_COD, EQP_TYP, EQP_TYP_NAME, ACCIDENTTYPE, FACTOR1, FACTOR2, FACTOR3, ANALYSIS ";
+                cmd.CommandText += "        FROM PORT_ACCIDENT_ANALYSIS ";
+                cmd.CommandText += " 	WHERE TMN_COD = '" + tmnCod + "' AND EQP_TYP_NAME = '" + eqpTypNam + "'";
+                cmd.Parameters.AddWithValue("@tmnCod", tmnCod);
+                cmd.Parameters.AddWithValue("@eqpTypNam", eqpTypNam);
+
+                Debug.WriteLine("* SelectAnalysisInfo() CommandText : " + cmd.CommandText);
+                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (rdr.Read())
+                {
+                    AnalysisList analysisList = new AnalysisList();
+                    analysisList.tmn_cod = rdr["TMN_COD"] as string;
+                    analysisList.eqp_typ = rdr["EQP_TYPE"] as string;
+                    analysisList.eqp_typ_name = rdr["EQP_TYPE_NAME"] as string;
+                    analysisList.accidenttype = rdr["ACCIDENTTYPE"] as string;
+                    analysisList.factor1 = rdr["FACTOR1"] as string;
+                    analysisList.factor2 = rdr["FACTOR2"] as string;
+                    analysisList.factor3 = rdr["FACTOR3"] as string;
+                    analysisList.analysis = rdr["ANALYSIS"] as string;
+                    result.Add(analysisList);
+                }
+
+                return result;
+            }
         }
 
         public List<WeatherList> SelectWeatherInfo(string selectedY, string selectedM, string selectedD, string selectedT)

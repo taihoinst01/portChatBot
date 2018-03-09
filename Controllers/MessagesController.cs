@@ -57,6 +57,7 @@ namespace PortChatBot
         public static int facebookpagecount = 0;
         public static string FB_BEFORE_MENT = "";
 
+        public static List<AnalysisList> analysisList = new List<AnalysisList>();
         public static List<HrList> hrList = new List<HrList>();
         public static List<WeatherList> weatherList = new List<WeatherList>();
         public static List<RelationList> relationList = new List<RelationList>();
@@ -622,8 +623,7 @@ namespace PortChatBot
                                         {
                                             if (weatherList.Count > 0 && weatherList[0].weather != null)
                                             {
-                                                DButil.HistoryLog("*** SELECT weatherList : Exist | name : " + weatherList[0].weather);
-                                                //for(int i = 0; i < weatherList.Count; i++)
+                                                DButil.HistoryLog("*** SELECT weatherList : Exist | name : " + weatherList[0].weather); 
                                                 for (int i = 0; i < 3; i++)
                                                 {
                                                     //  10:00/19/2/2018, sunny, Rainfall 0%, Wind 1m/s, Humidity 38%
@@ -647,9 +647,22 @@ namespace PortChatBot
                                     //  Accident Analysis
                                     if (dlg.cardTitle.Equals("Accident Analysis"))
                                     {
-                                        //
                                         DButil.HistoryLog("*** Accident Analysis - tmn_cod:" + userData.GetProperty<string>("tmn_cod")+ " | eqp_typ_name:" + userData.GetProperty<string>("eqp_typ_name"));
-                                        //userData.GetProperty<string>("eqp_typ_name");
+                                        //  PNIT, YT, Crash are related to humidity, proficiency, age. Threr is a risk of accident. (humidty 50 % ~, proficiency 5year, age 55~)
+                                        string[] strAnalysis = new string[4];
+                                        strAnalysis[0] = userData.GetProperty<string>("tmn_cod") + ", " + userData.GetProperty<string>("eqp_typ_name") + ", ";
+                                        analysisList = db.SelectAnalysisInfo(userData.GetProperty<string>("tmn_cod"), userData.GetProperty<string>("eqp_typ_name"));
+
+                                        if(analysisList != null)
+                                        {
+                                            if(analysisList.Count > 0 && analysisList[0].tmn_cod != null)
+                                            {
+                                                strAnalysis[0] = strAnalysis[0] + analysisList[0].accidenttype;
+                                                strAnalysis[1] = analysisList[0].factor1 + ", " + analysisList[0].factor2 + "," + analysisList[0].factor3;
+                                            }
+                                        }
+                                        dlg.cardText = dlg.cardText.Replace("#analysis1", strAnalysis[0]);
+                                        dlg.cardText = dlg.cardText.Replace("#analysis2", strAnalysis[1]);
 
                                     }
 
