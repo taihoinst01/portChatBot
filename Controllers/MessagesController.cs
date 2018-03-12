@@ -375,11 +375,13 @@ namespace PortChatBot
                         if (fullentity.Equals(""))
                         {
                             var loginStatus = userData.GetProperty<string>("loginStatus");
-                            loginStatus = "N";
-                            DButil.HistoryLog("*** loginStatus : " + loginStatus);
-                            if (loginStatus.Equals("N"))
+                            var isNumeric = int.TryParse(orgMent, out int n);
+                            DButil.HistoryLog("***** loginStatus : " + loginStatus + "| isNumeric : " + isNumeric);
+
+                            //if (loginStatus.Equals("N"))
+                            if (isNumeric)
                             {
-                                DButil.HistoryLog("*** loginStatus : N | activity.ChannelId : " + activity.ChannelId + " | activity.From.Id : " + activity.From.Id);
+                                DButil.HistoryLog("*** loginStatus : "+loginStatus+" | activity.ChannelId : " + activity.ChannelId + " | activity.From.Id : " + activity.From.Id);
                                 DButil.HistoryLog("*** orgMent : " + orgMent);
                                 hrList = db.SelectHrInfo(orgMent);
 
@@ -410,6 +412,22 @@ namespace PortChatBot
                                     } 
                                     else
                                     {
+                                        userData.SetProperty<string>("loginStatus", "N");
+                                        userData.SetProperty<string>("tmn_cod", "");
+                                        userData.SetProperty<string>("comp", "");
+                                        userData.SetProperty<string>("part", "");
+                                        userData.SetProperty<string>("workerid", "");
+                                        userData.SetProperty<string>("name", "");
+                                        userData.SetProperty<string>("eqp_typ", "");
+                                        userData.SetProperty<string>("eqp_typ_name", "");
+                                        userData.SetProperty<string>("equipment_no", "");
+                                        userData.SetProperty<string>("accident_record", "");
+                                        userData.SetProperty<string>("training_record", "");
+                                        userData.SetProperty<string>("age", "");
+                                        userData.SetProperty<string>("vacation", "");
+
+                                        await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
+
                                         fullentity = "fail,login";
                                         DButil.HistoryLog("*** fullentity : " + fullentity);
                                     }
@@ -417,6 +435,22 @@ namespace PortChatBot
                                 else
                                 {
                                     //  조회후 사원 번호 존재하지 않을 경우..  
+                                    userData.SetProperty<string>("loginStatus", "N");
+                                    userData.SetProperty<string>("tmn_cod", "");
+                                    userData.SetProperty<string>("comp", "");
+                                    userData.SetProperty<string>("part", "");
+                                    userData.SetProperty<string>("workerid", "");
+                                    userData.SetProperty<string>("name", "");
+                                    userData.SetProperty<string>("eqp_typ", "");
+                                    userData.SetProperty<string>("eqp_typ_name", "");
+                                    userData.SetProperty<string>("equipment_no", "");
+                                    userData.SetProperty<string>("accident_record", "");
+                                    userData.SetProperty<string>("training_record", "");
+                                    userData.SetProperty<string>("age", "");
+                                    userData.SetProperty<string>("vacation", "");
+
+                                    await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
+
                                     fullentity = "fail,login";
                                     DButil.HistoryLog("*** loginStatus : N | name : " + userData.GetProperty<string>("name") + " | workerid : " + userData.GetProperty<string>("workerid"));                                    
                                     DButil.HistoryLog("*** fullentity : " + fullentity);
@@ -425,16 +459,12 @@ namespace PortChatBot
                             }
                             else
                             {
-                                fullentity = "login,ok";
+                                //fullentity = "login,ok";
                                 DButil.HistoryLog("*** loginStatus : " + loginStatus + " | name : " + userData.GetProperty<string>("name") + "| workerid : " + userData.GetProperty<string>("workerid"));
                                 DButil.HistoryLog("*** fullentity : " + fullentity);
                             }
-
-
-
                         }
-
-
+                        
                         DButil.HistoryLog("fullentity : " + fullentity);
                         if (!string.IsNullOrEmpty(fullentity) || !fullentity.Equals(""))
                         {
