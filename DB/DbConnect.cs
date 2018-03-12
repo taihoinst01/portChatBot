@@ -1150,9 +1150,9 @@ namespace PortChatBot.DB
                 cmd.Connection = conn;
 
                 cmd.CommandText += "	SELECT ";
-                cmd.CommandText += "        TMN_COD, COMP, PART, WORKERID, NAME, EQP_TYP, EQP_TYP_NAME, EQUIPMENT_NO, ERNAM, ERDAT, ERZET ";
+                cmd.CommandText += "        TMN_COD, COMP, PART, WORKERID, NAME, EQP_TYP, EQP_TYP_NAME, EQUIPMENT_NO, ACCIDENT_RECORD, TRAINING_RECORD, AGE, VACATION";
                 cmd.CommandText += "        FROM PORT_HR";
-                cmd.CommandText += " 	WHERE WORKERID = '" + workerId + "'";
+                cmd.CommandText += " 	WHERE WORKERID = '" + workerId + "' OR NAME = '"+ workerId + "' ";
                 cmd.Parameters.AddWithValue("@workerId", workerId);
 
                 Debug.WriteLine("* SelectHrInfo() CommandText : " + cmd.CommandText);
@@ -1170,9 +1170,10 @@ namespace PortChatBot.DB
                     hrList.eqp_typ = rdr["EQP_TYP"] as string;
                     hrList.eqp_typ_name = rdr["EQP_TYP_NAME"] as string;
                     hrList.equipment_no = rdr["EQUIPMENT_NO"] as string;
-                    hrList.ernam = rdr["ERNAM"] as string;
-                    hrList.erdat = rdr["ERDAT"] as string;
-                    hrList.erzet = rdr["ERZET"] as string;
+                    hrList.accident_record = rdr["ACCIDENT_RECORD"] as string;
+                    hrList.training_record = rdr["TRAINING_RECORD"] as string;
+                    hrList.age = rdr["AGE"] as string;
+                    hrList.vacation = rdr["VACATION"] as string;
                     result.Add(hrList);
                 }
 
@@ -1206,8 +1207,8 @@ namespace PortChatBot.DB
                 {
                     AnalysisList analysisList = new AnalysisList();
                     analysisList.tmn_cod = rdr["TMN_COD"] as string;
-                    analysisList.eqp_typ = rdr["EQP_TYPE"] as string;
-                    analysisList.eqp_typ_name = rdr["EQP_TYPE_NAME"] as string;
+                    analysisList.eqp_typ = rdr["EQP_TYP"] as string;
+                    analysisList.eqp_typ_name = rdr["EQP_TYP_NAME"] as string;
                     analysisList.accidenttype = rdr["ACCIDENTTYPE"] as string;
                     analysisList.factor1 = rdr["FACTOR1"] as string;
                     analysisList.factor2 = rdr["FACTOR2"] as string;
@@ -1217,6 +1218,42 @@ namespace PortChatBot.DB
                 }
 
                 return result;
+            }
+        }
+
+        public List<TrendList> SelectTrendInfo(string eqpTyp)
+        {
+            SqlDataReader rdr = null;
+            List<TrendList> result = new List<TrendList>();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conn;
+
+                cmd.CommandText += "	SELECT ";
+                cmd.CommandText += "        YEAR, MONTH, EQP_TYP, ACCIDENTTYPE, COUNT ";
+                cmd.CommandText += "        FROM PORT_ACCIDENT_TREND ";
+                cmd.CommandText += " 	WHERE EQP_TYP = '" + eqpTyp + "' ";
+                cmd.Parameters.AddWithValue("@eqpTyp", eqpTyp);
+
+                Debug.WriteLine("* SelectTrendInfo() CommandText : " + cmd.CommandText);
+                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (rdr.Read())
+                {
+                    TrendList trendList = new TrendList();
+                    trendList.year = rdr["YEAR"] as string;
+                    trendList.month = rdr["MONTH"] as string;
+                    trendList.eqp_typ = rdr["EQP_TYP"] as string;
+                    trendList.accidenttype = rdr["ACCIDENTTYPE"] as string;
+                    trendList.count = rdr["COUNT"] as string;
+                    result.Add(trendList);
+                }
+
+                return result;
+
             }
         }
 

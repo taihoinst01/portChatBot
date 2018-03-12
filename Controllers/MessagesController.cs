@@ -58,6 +58,7 @@ namespace PortChatBot
         public static string FB_BEFORE_MENT = "";
 
         public static List<AnalysisList> analysisList = new List<AnalysisList>();
+        public static List<TrendList> trendList = new List<TrendList>();
         public static List<HrList> hrList = new List<HrList>();
         public static List<WeatherList> weatherList = new List<WeatherList>();
         public static List<RelationList> relationList = new List<RelationList>();
@@ -397,7 +398,10 @@ namespace PortChatBot
                                         userData.SetProperty<string>("eqp_typ", hrList[0].eqp_typ);
                                         userData.SetProperty<string>("eqp_typ_name", hrList[0].eqp_typ_name);                                        
                                         userData.SetProperty<string>("equipment_no", hrList[0].equipment_no);
-                                        userData.SetProperty<string>("ernam", hrList[0].ernam);
+                                        userData.SetProperty<string>("accident_record", hrList[0].accident_record);
+                                        userData.SetProperty<string>("training_record", hrList[0].training_record);
+                                        userData.SetProperty<string>("age", hrList[0].age);
+                                        userData.SetProperty<string>("vacation", hrList[0].vacation);
 
                                         await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
 
@@ -653,12 +657,12 @@ namespace PortChatBot
                                         strAnalysis[0] = userData.GetProperty<string>("tmn_cod") + ", " + userData.GetProperty<string>("eqp_typ_name") + ", ";
                                         analysisList = db.SelectAnalysisInfo(userData.GetProperty<string>("tmn_cod"), userData.GetProperty<string>("eqp_typ_name"));
 
-                                        if(analysisList != null)
+                                        if (analysisList != null)
                                         {
-                                            if(analysisList.Count > 0 && analysisList[0].tmn_cod != null)
+                                            if (analysisList.Count > 0 && analysisList[0].tmn_cod != null)
                                             {
                                                 strAnalysis[0] = strAnalysis[0] + analysisList[0].accidenttype;
-                                                strAnalysis[1] = analysisList[0].factor1 + ", " + analysisList[0].factor2 + "," + analysisList[0].factor3;
+                                                strAnalysis[1] = analysisList[0].factor1 + ", " + analysisList[0].factor2 + "," + analysisList[0].factor3 + ". " + analysisList[0].analysis;
                                             }
                                         }
                                         dlg.cardText = dlg.cardText.Replace("#analysis1", strAnalysis[0]);
@@ -669,7 +673,26 @@ namespace PortChatBot
                                     //  Accident Trend
                                     if (dlg.cardTitle.Equals("Accident Trend"))
                                     {
+                                        DButil.HistoryLog("*** Accident Trend - tmn_cod:" + userData.GetProperty<string>("tmn_cod") + " | eqp_typ:" + userData.GetProperty<string>("eqp_typ"));
                                         //
+                                        string[] strTrend = new string[3];
+                                        string[] strCnt = { "1st", "2nd", "3rd" };
+                                        string trendText = "";
+                                        trendList = db.SelectTrendInfo(userData.GetProperty<string>("eqp_typ"));
+                                        
+                                        if (trendList != null)
+                                        {
+                                            if (trendList.Count > 0 && trendList[0].eqp_typ != null)
+                                            {
+                                                for (int i = 0; i < 3; i++)
+                                                {
+                                                    strTrend[i] = strCnt[i] + ". Accident type:" + trendList[i].accidenttype + ", Accident count:" + trendList[i].count;
+                                                    trendText = trendText + strTrend[i];    
+                                                }
+                                            }
+                                        }
+                                        dlg.cardText = dlg.cardText.Replace("#accidentTrendList", trendText);
+
                                     }
 
                                     if (activity.ChannelId.Equals("facebook") && string.IsNullOrEmpty(dlg.cardTitle) && dlg.dlgType.Equals(TEXTDLG))
