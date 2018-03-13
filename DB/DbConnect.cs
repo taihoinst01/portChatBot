@@ -1150,7 +1150,7 @@ namespace PortChatBot.DB
                 cmd.Connection = conn;
 
                 cmd.CommandText += "	SELECT ";
-                cmd.CommandText += "        TMN_COD, COMP, PART, WORKERID, NAME, EQP_TYP, EQP_TYP_NAME, EQUIPMENT_NO, ACCIDENT_RECORD, TRAINING_RECORD, AGE, VACATION, EYE_SIGHT_LEFT, EYE_SIGHT_RIGHT";
+                cmd.CommandText += "        TMN_COD, WORKERID, NAME, EQP_TYP, EQP_TYP_NAME, EQUIPMENT_NO, ACCIDENT_RECORD, TRAINING_RECORD, AGE, VACATION, EYE_SIGHT_LEFT, EYE_SIGHT_RIGHT";
                 cmd.CommandText += "        FROM PORT_HR";
                 cmd.CommandText += " 	WHERE WORKERID = '" + workerId + "' OR NAME = '"+ workerId + "' ";
                 cmd.Parameters.AddWithValue("@workerId", workerId);
@@ -1163,8 +1163,8 @@ namespace PortChatBot.DB
                 {
                     HrList hrList = new HrList();
                     hrList.tmn_cod = rdr["TMN_COD"] as string;
-                    hrList.comp = rdr["COMP"] as string;
-                    hrList.part = rdr["PART"] as string;
+                    //hrList.comp = rdr["COMP"] as string;
+                    //hrList.part = rdr["PART"] as string;
                     hrList.workerid = rdr["WORKERID"] as string;
                     hrList.name = rdr["NAME"] as string;
                     hrList.eqp_typ = rdr["EQP_TYP"] as string;

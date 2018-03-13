@@ -9,8 +9,6 @@ namespace PortChatBot.Models
     public class HrList
     {
         public string tmn_cod;
-        public string comp;
-        public string part;
         public string workerid;
         public string name;
         public string eqp_typ;
