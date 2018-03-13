@@ -19,6 +19,8 @@ namespace PortChatBot.Models
         public string accident_record;
         public string training_record;
         public string age;
+        public string eye_sight_left;
+        public string eye_sight_right;
         public string vacation;
         public string ernam;
         public string erdat;

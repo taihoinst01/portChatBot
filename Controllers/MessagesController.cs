@@ -650,19 +650,21 @@ namespace PortChatBot
                                     {
                                         DButil.HistoryLog("*** dlg.cardTitle : " + dlg.cardTitle + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity);
                                         //  GET weatherInfo..
-                                        weatherList = db.SelectWeatherInfo("2018", "1", "1", "1");
+                                        string strTime = System.DateTime.Now.ToString("yyyyMMddhh");
+                                        strTime = "2018022811";
+                                        weatherList = db.SelectWeatherInfo(strTime);
                                         string[] strComment = new string[3];
                                         string weatherInfo = "";
                                         if (weatherList != null)
                                         {
-                                            if (weatherList.Count > 0 && weatherList[0].weather != null)
+                                            if (weatherList.Count > 0 && weatherList[0].time != null)
                                             {
-                                                DButil.HistoryLog("*** SELECT weatherList : Exist | name : " + weatherList[0].weather); 
+                                                DButil.HistoryLog("*** SELECT weatherList : Exist | name : " + weatherList[0].time); 
                                                 for (int i = 0; i < 3; i++)
                                                 {
                                                     //  10:00/19/2/2018, sunny, Rainfall 0%, Wind 1m/s, Humidity 38%
-                                                    strComment[i] = weatherList[i].time+":00/"+weatherList[i].day+"/"+weatherList[i].month+"/"+weatherList[i].year+", "
-                                                        +weatherList[i].weather+", Rainfall "+weatherList[i].rainfall+"%, Wind "+weatherList[i].wind+"m/s, Humidity "+weatherList[i].humidity+"% \n";
+                                                    strComment[i] = weatherList[i].time.Substring(8,2)+":00/"+ weatherList[i].time.Substring(6, 2) + "/"+ weatherList[i].time.Substring(4, 2) + "/"+ weatherList[i].time.Substring(0, 4) + ", "
+                                                        +" Temp "+weatherList[i].temp+ "℃, Rainfall " + weatherList[i].rainfall+"%, Wind "+weatherList[i].wind+"m/s, Humidity "+weatherList[i].humidity+"% \n";
                                                     weatherInfo = weatherInfo + "- " + strComment[i];
                                                 }
                                                 DButil.HistoryLog("*** weatherInfo : " + weatherInfo);
@@ -675,7 +677,53 @@ namespace PortChatBot
                                                 DButil.HistoryLog("*** weatherInfo : NO weatherList !");
                                             }
                                         }
+                                        else
+                                        {   
+                                            //  날씨 정보 없는 경우..
+                                            dlg.cardText = "There is no weather information for that day.";
+                                        }
                                         //DButil.HistoryLog("*** HH : "+DateTime.Now.ToString("HH"));
+                                    }
+
+                                    //  Accident History
+                                    if (dlg.cardTitle.Equals("Accident History"))
+                                    {
+                                        DButil.HistoryLog("*** Accident History");
+                                        string strWorkerId = "";
+                                        string strAccidentRecord = "";
+                                        string[] strComment = orgMent.Split('\'');
+                                        strWorkerId = strComment[1];
+                                        DButil.HistoryLog("*** Accident History - strWorkerId : " + strWorkerId);
+                                        if (strWorkerId == "")
+                                        {
+                                            strAccidentRecord = userData.GetProperty<string>("accident_record");
+                                            DButil.HistoryLog("*** Accident History - strAccidentRecord : " + strAccidentRecord);
+                                            if (strAccidentRecord == "N/A")
+                                            {
+                                                strAccidentRecord = "No searched history of accidents.";
+                                            }
+                                            dlg.cardText = dlg.cardText.Replace("#accidentHistory", strAccidentRecord);
+                                        }
+                                        else
+                                        {
+                                            hrList = db.SelectHrInfo(strWorkerId);
+                                            if (hrList != null)
+                                            {
+                                                DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| accident_record : " + hrList[0].accident_record);
+                                                if (hrList.Count > 0 && hrList[0].accident_record != "N/A")
+                                                {
+                                                    dlg.cardText = dlg.cardText.Replace("#accidentHistory", hrList[0].accident_record);
+                                                }
+                                                else
+                                                {
+                                                    dlg.cardText = dlg.cardText.Replace("#accidentHistory", "No searched history of accidents.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                dlg.cardText = dlg.cardText.Replace("#accidentHistory", "No searched history of accidents.");
+                                            }
+                                        }
                                     }
 
                                     //  Accident Analysis

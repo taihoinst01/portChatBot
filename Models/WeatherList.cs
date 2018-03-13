@@ -8,11 +8,8 @@ namespace PortChatBot.Models
     [Serializable]
     public class WeatherList
     {
-        public string year;
-        public string month;
-        public string day;
         public string time;
-        public string weather;
+        public string temp;
         public int rainfall;
         public int wind;
         public int humidity;
