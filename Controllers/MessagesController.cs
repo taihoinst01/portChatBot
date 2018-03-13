@@ -726,6 +726,47 @@ namespace PortChatBot
                                         }
                                     }
 
+                                    //  User Age
+                                    if (dlg.cardTitle.Equals("User Age"))
+                                    {
+                                        DButil.HistoryLog("*** User Age");
+                                        string strWorkerId = "";
+                                        string strAge = "";
+                                        string[] strComment = orgMent.Split('\'');
+                                        strWorkerId = strComment[1];
+                                        DButil.HistoryLog("*** Accident History - strWorkerId : " + strWorkerId);
+                                        if (strWorkerId == "")
+                                        {
+                                            strAge = userData.GetProperty<string>("age");
+                                            DButil.HistoryLog("*** User Age - strAge : " + strAge);
+                                            if (strAge == "N/A")
+                                            {
+                                                strAge = "No searched history of accidents.";
+                                            }
+                                            dlg.cardText = dlg.cardText.Replace("#accidentHistory", strAge);
+                                        }
+                                        else
+                                        {
+                                            hrList = db.SelectHrInfo(strWorkerId);
+                                            if (hrList != null)
+                                            {
+                                                DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| age : " + hrList[0].age);
+                                                if (hrList.Count > 0 && hrList[0].age != "N/A")
+                                                {
+                                                    dlg.cardText = hrList[0].name + "("+ hrList[0].workerid+") : " + dlg.cardText.Replace("#userAge", hrList[0].age) + " yesars old.";
+                                                }
+                                                else
+                                                {
+                                                    dlg.cardText = dlg.cardText.Replace("#userAge", "No searched history of accidents.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                dlg.cardText = dlg.cardText.Replace("#userAge", "No searched history of accidents.");
+                                            }
+                                        }
+                                    }
+
                                     //  Accident Analysis
                                     if (dlg.cardTitle.Equals("Accident Analysis"))
                                     {
