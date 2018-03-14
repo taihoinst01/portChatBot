@@ -662,12 +662,14 @@ namespace PortChatBot
                                             if (hrList != null)
                                             {
                                                 DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| accident_record : " + hrList[0].accident_record);
-                                                if (hrList.Count > 0 && hrList[0].accident_record != "N/A")
+                                                if (hrList.Count > 0 && hrList[0].accident_record != "" && hrList[0].accident_record != null) 
                                                 {
+                                                    DButil.HistoryLog("*** Accident History - SelectHrInfo : YY " + hrList[0].accident_record);
                                                     dlg.cardText = dlg.cardText.Replace("#accidentHistory", hrList[0].accident_record);
                                                 }
                                                 else
                                                 {
+                                                    DButil.HistoryLog("*** Accident History - SelectHrInfo : NO " + hrList[0].accident_record);
                                                     dlg.cardText = dlg.cardText.Replace("#accidentHistory", "No searched history of accidents.");
                                                 }
                                             }
@@ -703,7 +705,7 @@ namespace PortChatBot
                                             if (hrList != null)
                                             {
                                                 DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| age : " + hrList[0].age);
-                                                if (hrList.Count > 0 && hrList[0].age != "")
+                                                if (hrList.Count > 0 && hrList[0].age != "" && hrList[0].age != null)
                                                 {
                                                     dlg.cardText = hrList[0].name + "("+ hrList[0].workerid+") : " + dlg.cardText.Replace("#userAge", hrList[0].age) + " yesars old.";
                                                 }
@@ -744,7 +746,7 @@ namespace PortChatBot
                                             if (hrList != null)
                                             {
                                                 DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| vacation : " + hrList[0].vacation);
-                                                if (hrList.Count > 0 && hrList[0].vacation != "")
+                                                if (hrList.Count > 0 && hrList[0].vacation != "" && hrList[0].vacation != null)
                                                 {
                                                     dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#vacation", hrList[0].vacation);
                                                 }
@@ -786,7 +788,7 @@ namespace PortChatBot
                                             if (hrList != null)
                                             {
                                                 DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| vacation : " + hrList[0].training_record);
-                                                if (hrList.Count > 0 && hrList[0].vacation != "")
+                                                if (hrList.Count > 0 && hrList[0].training_record != "" && hrList[0].training_record != null)
                                                 {
                                                     dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#trainingHistory", hrList[0].training_record);
                                                 }
@@ -828,7 +830,7 @@ namespace PortChatBot
                                             if (hrList != null)
                                             {
                                                 DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| eye_sight_left : " + hrList[0].eye_sight_left);
-                                                if (hrList.Count > 0 && hrList[0].eye_sight_left != "")
+                                                if (hrList.Count > 0 && hrList[0].eye_sight_left != "" && hrList[0].eye_sight_left != null)
                                                 {
                                                     strEyeSight = "Left(" + hrList[0].eye_sight_left + "), Right(" + hrList[0].eye_sight_right + ")";
                                                     dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#eyeSight", strEyeSight);
