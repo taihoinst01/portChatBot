@@ -757,6 +757,7 @@ namespace PortChatBot
                                                 dlg.cardText = dlg.cardText.Replace("#vacation", "No vacation history found.");
                                             }
                                         }
+
                                     }
 
                                     //  Training History
