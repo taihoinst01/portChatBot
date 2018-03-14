@@ -341,7 +341,7 @@ namespace PortChatBot
                                 DButil.HistoryLog("*** loginStatus : "+loginStatus+" | activity.ChannelId : " + activity.ChannelId + " | activity.From.Id : " + activity.From.Id);
                                 DButil.HistoryLog("*** orgMent : " + orgMent);
                                 hrList = db.SelectHrInfo(orgMent);
-
+                                DButil.HistoryLog("*** SelectHrInfo - tmn_cod : " + hrList[0].tmn_cod); 
                                 if (hrList != null)
                                 {
                                     if (hrList.Count > 0 && hrList[0].name != null)
