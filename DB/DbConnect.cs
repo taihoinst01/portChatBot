@@ -1236,12 +1236,17 @@ namespace PortChatBot.DB
                 conn.Open();
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = conn;
-
+                /*
                 cmd.CommandText += "	SELECT ";
                 cmd.CommandText += "        YEAR, MONTH, EQP_TYP, ACCIDENTTYPE, COUNT ";
                 cmd.CommandText += "        FROM PORT_ACCIDENT_TREND ";
                 cmd.CommandText += " 	WHERE EQP_TYP = '" + eqpTyp + "' ";
                 cmd.Parameters.AddWithValue("@eqpTyp", eqpTyp);
+                */
+                //select ACCIDENTTYPE, SUM(COUNT) AS countSum from PORT_ACCIDENT_TREND group by ACCIDENTTYPE ORDER BY countSum DESC
+                cmd.CommandText += "    SELECT ACCIDENTTYPE, SUM(COUNT) AS COUNTSUM ";
+                cmd.CommandText += "        FROM PORT_ACCIDENT_TREND ";
+                cmd.CommandText += "        GROUP BY ACCIDENTTYPE ORDER BY COUNTSUM DESC ";
 
                 Debug.WriteLine("* SelectTrendInfo() CommandText : " + cmd.CommandText);
                 rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -1249,11 +1254,11 @@ namespace PortChatBot.DB
                 while (rdr.Read())
                 {
                     TrendList trendList = new TrendList();
-                    trendList.year = rdr["YEAR"] as string;
-                    trendList.month = rdr["MONTH"] as string;
-                    trendList.eqp_typ = rdr["EQP_TYP"] as string;
+                    //trendList.year = rdr["YEAR"] as string;
+                    //trendList.month = rdr["MONTH"] as string;
+                    //trendList.eqp_typ = rdr["EQP_TYP"] as string;
                     trendList.accidenttype = rdr["ACCIDENTTYPE"] as string;
-                    trendList.count = rdr["COUNT"] as string;
+                    trendList.count = Convert.ToInt32(rdr["COUNTSUM"]);
                     result.Add(trendList);
                 }
 

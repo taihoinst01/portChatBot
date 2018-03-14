@@ -880,16 +880,16 @@ namespace PortChatBot
                                         //
                                         string[] strTrend = new string[3];
                                         string[] strCnt = { "1st", "2nd", "3rd" };
-                                        string trendText = "";
+                                        string trendText = " \n\n";
                                         trendList = db.SelectTrendInfo(userData.GetProperty<string>("eqp_typ"));
                                         
                                         if (trendList != null)
                                         {
-                                            if (trendList.Count > 0 && trendList[0].eqp_typ != null)
+                                            if (trendList.Count > 0 && trendList[0].accidenttype != null)
                                             {
                                                 for (int i = 0; i < 3; i++)
                                                 {
-                                                    strTrend[i] = strCnt[i] + ". Accident type:" + trendList[i].accidenttype + ", Accident count:" + trendList[i].count;
+                                                    strTrend[i] = strCnt[i] + ". Accident type:" + trendList[i].accidenttype + ", Accident count:" + trendList[i].count + " \n\n";
                                                     trendText = trendText + strTrend[i];    
                                                 }
                                             }

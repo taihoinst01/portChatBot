@@ -13,7 +13,7 @@ namespace PortChatBot.Models
         public string month;
         public string eqp_typ;
         public string accidenttype;
-        public string count;
+        public int count;
 
     }
 }
