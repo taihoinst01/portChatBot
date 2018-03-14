@@ -1142,13 +1142,13 @@ namespace PortChatBot.DB
         {
             SqlDataReader rdr = null;
             List<HrList> result = new List<HrList>();
-
+            DButil.HistoryLog("* SelectHrInfo start: ");
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = conn;
-
+                DButil.HistoryLog("* SelectHrInfo commandText start: ");
                 cmd.CommandText += "	SELECT ";
                 cmd.CommandText += "        TMN_COD, WORKERID, NAME, EQP_TYP, EQP_TYP_NAME, EQUIPMENT_NO, ACCIDENT_RECORD, TRAINING_RECORD, AGE, VACATION, EYE_SIGHT_LEFT, EYE_SIGHT_RIGHT";
                 cmd.CommandText += "        FROM PORT_HR";
