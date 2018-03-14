@@ -602,7 +602,10 @@ namespace PortChatBot
                                     {
                                         DButil.HistoryLog("*** dlg.cardTitle : " + dlg.cardTitle + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity);
                                         //  GET weatherInfo..
-                                        string strTime = System.DateTime.Now.ToString("yyyyMMddHH");
+                                        //string strTime = System.DateTime.Now.ToString("yyyyMMddHH");
+                                        DateTime nowDateValue = System.DateTime.Now.AddHours(9);
+                                        string strTime = nowDateValue.ToString("yyyyMMddHH");
+
                                         //strTime = "2018022811";
                                         weatherList = db.SelectWeatherInfo(strTime);
                                         string[] strComment = new string[3];
