@@ -1276,7 +1276,7 @@ namespace PortChatBot.DB
                 cmd.CommandText += "	SELECT ";
                 cmd.CommandText += "        TIME, TEMP, RAINFALL, WIND, HUMIDITY, ERNAM ";
                 cmd.CommandText += "        FROM PORT_WEATHER";
-                cmd.CommandText += " 	WHERE TIME >= '"+strTime+"'";
+                cmd.CommandText += " 	WHERE TIME > '"+strTime+"'";
                 //cmd.CommandText += "        ORDER BY ";
                 //cmd.Parameters.AddWithValue("@year", selectedY);
 
@@ -1289,12 +1289,14 @@ namespace PortChatBot.DB
                     WeatherList weatherList = new WeatherList();
                     weatherList.time = rdr["TIME"] as string;
                     weatherList.temp = rdr["TEMP"] as string;
-                    weatherList.rainfall = Convert.ToInt32(rdr["RAINFALL"]);
-                    weatherList.wind = Convert.ToInt32(rdr["WIND"]);
-                    weatherList.humidity = Convert.ToInt32(rdr["HUMIDITY"]);
+                    weatherList.rainfall = rdr["RAINFALL"] as string;
+                    weatherList.wind = rdr["WIND"] as string;
+                    weatherList.humidity = rdr["HUMIDITY"] as string;
+                    //weatherList.rainfall = Convert.ToInt32(rdr["RAINFALL"]);
+                    //weatherList.wind = Convert.ToInt32(rdr["WIND"]);
+                    //weatherList.humidity = Convert.ToInt32(rdr["HUMIDITY"]);
                     weatherList.ernam = rdr["ERNAM"] as string;
-                    //weatherList.erdat = rdr["ERDAT"] as string;
-                    //weatherList.erzet = rdr["ERZET"] as string;
+                    
                     result.Add(weatherList);
                 }
 

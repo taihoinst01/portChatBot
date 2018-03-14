@@ -602,8 +602,8 @@ namespace PortChatBot
                                     {
                                         DButil.HistoryLog("*** dlg.cardTitle : " + dlg.cardTitle + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity);
                                         //  GET weatherInfo..
-                                        string strTime = System.DateTime.Now.ToString("yyyyMMddhh");
-                                        strTime = "2018022811";
+                                        string strTime = System.DateTime.Now.ToString("yyyyMMddHH");
+                                        //strTime = "2018022811";
                                         weatherList = db.SelectWeatherInfo(strTime);
                                         string[] strComment = new string[3];
                                         string weatherInfo = "";

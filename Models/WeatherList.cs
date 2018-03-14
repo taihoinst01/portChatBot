@@ -10,9 +10,13 @@ namespace PortChatBot.Models
     {
         public string time;
         public string temp;
-        public int rainfall;
-        public int wind;
-        public int humidity;
+        //public int rainfall;
+        //public int wind;
+        //public int humidity;
+        public string rainfall;
+        public string wind;
+        public string humidity;
+
         public string ernam;
         public string erdat;
         public string erzet;
