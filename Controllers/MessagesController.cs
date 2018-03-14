@@ -262,49 +262,6 @@ namespace PortChatBot
                     Debug.WriteLine("* activity.Type == ActivityTypes.Message ");
                     channelID = activity.ChannelId;
                     string orgMent = activity.Text;
-
-                    /*
-                    var loginStatus = userData.GetProperty<string>("loginStatus");
-                    //loginStatus = "N";
-                    DButil.HistoryLog("*** loginStatus : " + loginStatus);
-                    if (loginStatus.Equals("N"))
-                    {
-                        DButil.HistoryLog("*** loginStatus : N | activity.ChannelId : " + activity.ChannelId + " | activity.From.Id : " + activity.From.Id);
-                        DButil.HistoryLog("*** orgMent : " + orgMent);
-                        hrList = db.SelectHrInfo(orgMent);
-
-                        if (hrList != null)
-                        {
-                            if (hrList.Count > 0 && hrList[0].name != null)
-                            {
-                                DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name);
-
-                                userData.SetProperty<string>("loginStatus", "Y");
-                                userData.SetProperty<string>("tmn_cod", hrList[0].tmn_cod);
-                                userData.SetProperty<string>("comp", hrList[0].comp);
-                                userData.SetProperty<string>("part", hrList[0].part);
-                                userData.SetProperty<string>("workerid", hrList[0].workerid);
-                                userData.SetProperty<string>("name", hrList[0].name);
-                                userData.SetProperty<string>("eqp_typ", hrList[0].eqp_typ);
-                                userData.SetProperty<string>("equipment_no", hrList[0].equipment_no);
-                                userData.SetProperty<string>("ernam", hrList[0].ernam);
-
-                                await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
-                            }
-                        }
-                        else
-                        {   
-                            //  조회후 사원 번호 존재하지 않을 경우..  
-                            DButil.HistoryLog("*** loginStatus : N | name : "+userData.GetProperty<string>("name")+" | workerid : "+userData.GetProperty<string>("workerid") );
-                        }
-
-                    }
-                    else
-                    {
-                        DButil.HistoryLog("*** loginStatus : "+loginStatus+ " | name : " + userData.GetProperty<string>("name") + "| workerid : " + userData.GetProperty<string>("workerid") );
-                    }
-                    */
-
                     apiFlag = "COMMON";
 
                     //대화 시작 시간
@@ -800,7 +757,6 @@ namespace PortChatBot
                                                 dlg.cardText = dlg.cardText.Replace("#vacation", "No vacation history found.");
                                             }
                                         }
-
                                     }
 
                                     //  Training History
