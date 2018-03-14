@@ -328,7 +328,7 @@ namespace PortChatBot
                         luisEntities = cacheList.luisEntities;
 
                         String fullentity = db.SearchCommonEntities;    //  FN_ENTITY_ORDERBY_ADD
-
+                        DButil.HistoryLog("***** fullentity first : " + fullentity);
                         if (fullentity.Equals(""))
                         {
                             var loginStatus = userData.GetProperty<string>("loginStatus");
