@@ -1156,7 +1156,7 @@ namespace PortChatBot.DB
                 cmd.Parameters.AddWithValue("@workerId", workerId);
 
                 Debug.WriteLine("* SelectHrInfo() CommandText : " + cmd.CommandText);
-
+                DButil.HistoryLog("* SelectHrInfo : " + cmd.CommandText);
                 rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 while (rdr.Read())
