@@ -332,7 +332,8 @@ namespace PortChatBot
                         if (fullentity.Equals(""))
                         {
                             var loginStatus = userData.GetProperty<string>("loginStatus");
-                            var isNumeric = int.TryParse(orgMent, out int n);
+                            int n = 0;
+                            var isNumeric = int.TryParse(orgMent, out n);
                             DButil.HistoryLog("***** loginStatus : " + loginStatus + "| isNumeric : " + isNumeric);
 
                             //if (loginStatus.Equals("N"))
