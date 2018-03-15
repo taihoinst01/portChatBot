@@ -128,6 +128,11 @@ namespace PortChatBot
             //DButil.HistoryLog("activity.Recipient.Name : " + activity.Recipient.Name);
             //DButil.HistoryLog("activity.Name : " + activity.Name);
 
+            // userData (epkim)
+            StateClient stateClient = activity.GetStateClient();
+            BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
+
+
             if (activity.Type == ActivityTypes.ConversationUpdate && activity.MembersAdded.Any(m => m.Id == activity.Recipient.Id))
             {
                 startTime = DateTime.Now;
@@ -148,6 +153,22 @@ namespace PortChatBot
                 DButil.HistoryLog("db SelectConfig start !! ");
                 List<ConfList> confList = db.SelectConfig();
                 DButil.HistoryLog("db SelectConfig end!! ");
+
+                //
+                userData.SetProperty<string>("loginStatus", "N");
+                userData.SetProperty<string>("tmn_cod", "");
+                userData.SetProperty<string>("workerid", "");
+                userData.SetProperty<string>("name", "");
+                userData.SetProperty<string>("eqp_typ", "");
+                userData.SetProperty<string>("eqp_typ_name", "");
+                userData.SetProperty<string>("equipment_no", "");
+                userData.SetProperty<string>("accident_record", "");
+                userData.SetProperty<string>("training_record", "");
+                userData.SetProperty<string>("age", "");
+                userData.SetProperty<string>("vacation", "");
+
+                await stateClient.BotState.SetUserDataAsync(activity.ChannelId, activity.From.Id, userData);
+                //
 
                 for (int i = 0; i < confList.Count; i++)
                 {
@@ -216,12 +237,14 @@ namespace PortChatBot
                     }
                     else
                     {
+                        DButil.HistoryLog("* ConversationUpdate : dlgType is not CARDDLG ");
                         if (activity.ChannelId.Equals("facebook") && string.IsNullOrEmpty(dialogs.cardTitle) && dialogs.dlgType.Equals(TEXTDLG))
                         {
+                            DButil.HistoryLog("* ConversationUpdate : dlgType is not CARDDLG | facebook");
                             Activity reply_facebook = activity.CreateReply();
                             reply_facebook.Recipient = activity.From;
                             reply_facebook.Type = "message";
-                            DButil.HistoryLog("facebook  card Text : " + dialogs.cardText);
+                            DButil.HistoryLog("facebook card Text : " + dialogs.cardText);
                             reply_facebook.Text = dialogs.cardText;
                             var reply_ment_facebook = connector.Conversations.SendToConversationAsync(reply_facebook);
                             //SetActivity(reply_facebook);
@@ -229,6 +252,7 @@ namespace PortChatBot
                         }
                         else
                         {
+                            DButil.HistoryLog("* ConversationUpdate : dlgType is not CARDDLG | NOT facebook");
                             tempAttachment = dbutil.getAttachmentFromDialog(dialogs, activity);
                             initReply.Attachments.Add(tempAttachment);
                         }
@@ -252,8 +276,8 @@ namespace PortChatBot
 
                 DButil.HistoryLog("* activity.Type == ActivityTypes.Message ");
                 // userData (epkim)
-                StateClient stateClient = activity.GetStateClient();
-                BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
+                //StateClient stateClient = activity.GetStateClient();
+                //BotData userData = await stateClient.BotState.GetUserDataAsync(activity.ChannelId, activity.From.Id);
 
                 //activity.ChannelId = "facebook";
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
@@ -292,8 +316,7 @@ namespace PortChatBot
                         //캐시 체크
                         cashOrgMent = Regex.Replace(orgMent, @"[^a-zA-Z0-9ㄱ-힣]", "", RegexOptions.Singleline);
                         cacheList = db.CacheChk(cashOrgMent.Replace(" ", ""));                     // 캐시 체크 (TBL_QUERY_ANALYSIS_RESULT 조회..)
-
-
+                        
                         //캐시에 없을 경우
                         if (cacheList.luisIntent == null || cacheList.luisEntities == null)
                         {
@@ -316,7 +339,7 @@ namespace PortChatBot
                             {
                                 apiFlag = "RECOMMEND";
                             }
-                            else
+                            else 
                             {
                                 apiFlag = "COMMON";
                             }
@@ -335,16 +358,16 @@ namespace PortChatBot
                             int n = 0;
                             var isNumeric = int.TryParse(orgMent, out n);
                             DButil.HistoryLog("***** loginStatus : " + loginStatus + "| isNumeric : " + isNumeric);
-
-                            //if (loginStatus.Equals("N"))
+                            
                             if (isNumeric)
                             {
                                 DButil.HistoryLog("*** loginStatus : "+loginStatus+" | activity.ChannelId : " + activity.ChannelId + " | activity.From.Id : " + activity.From.Id);
                                 DButil.HistoryLog("*** orgMent : " + orgMent);
                                 hrList = db.SelectHrInfo(orgMent);
-                                DButil.HistoryLog("*** SelectHrInfo - tmn_cod : " + hrList[0].tmn_cod); 
+                                //DButil.HistoryLog("*** SelectHrInfo - tmn_cod : " + hrList[0].tmn_cod);
                                 if (hrList != null)
                                 {
+                                    //DButil.HistoryLog("*** SelectHrInfo - tmn_cod : " + hrList[0].tmn_cod);
                                     if (hrList.Count > 0 && hrList[0].name != null)
                                     {
                                         DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name);
@@ -368,6 +391,7 @@ namespace PortChatBot
                                     } 
                                     else
                                     {
+                                        DButil.HistoryLog("*** SELECT hrList : NOT Exist");
                                         userData.SetProperty<string>("loginStatus", "N");
                                         userData.SetProperty<string>("tmn_cod", "");
                                         userData.SetProperty<string>("workerid", "");
@@ -388,6 +412,7 @@ namespace PortChatBot
                                 }
                                 else
                                 {
+                                    DButil.HistoryLog("*** SelectHrInfo : NULL");
                                     //  조회후 사원 번호 존재하지 않을 경우..  
                                     userData.SetProperty<string>("loginStatus", "N");
                                     userData.SetProperty<string>("tmn_cod", "");
@@ -407,13 +432,6 @@ namespace PortChatBot
                                     DButil.HistoryLog("*** loginStatus : N | name : " + userData.GetProperty<string>("name") + " | workerid : " + userData.GetProperty<string>("workerid"));                                    
                                     DButil.HistoryLog("*** fullentity : " + fullentity);
                                 }
-
-                            }
-                            else
-                            {
-                                //fullentity = "login,ok";
-                                DButil.HistoryLog("*** loginStatus : " + loginStatus + " | name : " + userData.GetProperty<string>("name") + "| workerid : " + userData.GetProperty<string>("workerid"));
-                                DButil.HistoryLog("*** fullentity : " + fullentity);
                             }
                         }
                         
@@ -668,12 +686,12 @@ namespace PortChatBot
                                                 if (hrList.Count > 0 && hrList[0].accident_record != "" && hrList[0].accident_record != null) 
                                                 {
                                                     DButil.HistoryLog("*** Accident History - SelectHrInfo : YY " + hrList[0].accident_record);
-                                                    dlg.cardText = dlg.cardText.Replace("#accidentHistory", hrList[0].accident_record);
+                                                    dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#accidentHistory", hrList[0].accident_record);
                                                 }
                                                 else
                                                 {
                                                     DButil.HistoryLog("*** Accident History - SelectHrInfo : NO " + hrList[0].accident_record);
-                                                    dlg.cardText = dlg.cardText.Replace("#accidentHistory", "No searched history of accidents.");
+                                                    dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#accidentHistory", "No searched history of accidents.");
                                                 }
                                             }
                                             else
@@ -710,11 +728,11 @@ namespace PortChatBot
                                                 DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| age : " + hrList[0].age);
                                                 if (hrList.Count > 0 && hrList[0].age != "" && hrList[0].age != null)
                                                 {
-                                                    dlg.cardText = hrList[0].name + "("+ hrList[0].workerid+") : " + dlg.cardText.Replace("#userAge", hrList[0].age) + " yesars old.";
+                                                    dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#userAge", hrList[0].age) + " yesars old.";
                                                 }
                                                 else
                                                 {
-                                                    dlg.cardText = dlg.cardText.Replace("#userAge", "No searched history of accidents.");
+                                                    dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#userAge", "No searched history of accidents.");
                                                 }
                                             }
                                             else
@@ -755,7 +773,7 @@ namespace PortChatBot
                                                 }
                                                 else
                                                 {
-                                                    dlg.cardText = dlg.cardText.Replace("#vacation", "No vacation history found.");
+                                                    dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#vacation", "No vacation history found.");
                                                 }
                                             }
                                             else
@@ -797,7 +815,7 @@ namespace PortChatBot
                                                 }
                                                 else
                                                 {
-                                                    dlg.cardText = dlg.cardText.Replace("#trainingHistory", "No training history found.");
+                                                    dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#trainingHistory", "No training history found.");
                                                 }
                                             }
                                             else
