@@ -441,19 +441,23 @@ namespace PortChatBot
                             //  fullentity 있는 경우..
                             if (!String.IsNullOrEmpty(luisEntities))
                             {
+                                DButil.HistoryLog("fullentity : " + fullentity + " | luisEntities : " + luisEntities + "| luisIntent : Y " + luisIntent);
                                 //entity 길이 비교
                                 if (fullentity.Length > luisEntities.Length || luisIntent == null || luisIntent.Equals(""))
                                 {
+                                    //DButil.HistoryLog("fullentity : " + fullentity + " | luisEntities : " + luisEntities);
                                     //DefineTypeChkSpare에서는 인텐트나 루이스아이디조건 없이 엔티티만 일치하면 다이얼로그 리턴
                                     relationList = db.DefineTypeChkSpare(fullentity);
                                 }
                                 else
                                 {
+                                    //DButil.HistoryLog("fullentity : " + fullentity);
                                     relationList = db.DefineTypeChk(MessagesController.luisId, MessagesController.luisIntent, MessagesController.luisEntities);
                                 }
                             }
                             else
                             {
+                                DButil.HistoryLog("fullentity : " + fullentity + " | luisEntities : " + luisEntities + "| luisIntent : N " + luisIntent);
                                 relationList = db.DefineTypeChkSpare(fullentity);
                             }
                         }
@@ -603,35 +607,31 @@ namespace PortChatBot
                                         string[] strComment = new string[4];
                                         string optionComment = "";
 
-                                        //strComment[0] = userData.GetProperty<string>("comp");
                                         strComment[1] = userData.GetProperty<string>("name");
                                         strComment[2] = userData.GetProperty<string>("workerid");
                                         strComment[3] = userData.GetProperty<string>("equipment_no");
                                         DButil.HistoryLog("*** strComment[0] : " + strComment[0] + " | strComment[1] : " + strComment[1] + " | strComment[2] : " + strComment[2]);
 
                                         optionComment = strComment[0] + "," + strComment[1] + "님(" + strComment[2] + "), " + strComment[3];
-                                        //optionComment = strComment[0] + "/" + strComment[1] + "/" + fullentity;
                                         dlg.cardText = dlg.cardText.Replace("#OPTIONS", optionComment);
 
                                     }
 
-                                    //  weatherInfo
+                                    //  Weather Info
                                     if (dlg.cardTitle.Equals("Weather Info")) //  주문내역 dialog 일시..
                                     {
                                         DButil.HistoryLog("*** dlg.cardTitle : " + dlg.cardTitle + " | dlg.cardText : " + dlg.cardText + " | fullentity : " + fullentity);
-                                        //  GET weatherInfo..
-                                        //string strTime = System.DateTime.Now.ToString("yyyyMMddHH");
                                         DateTime nowDateValue = System.DateTime.Now.AddHours(9);
                                         string strTime = nowDateValue.ToString("yyyyMMddHH");
 
-                                        //strTime = "2018022811";
                                         weatherList = db.SelectWeatherInfo(strTime);
-                                        string[] strComment = new string[3];
-                                        string weatherInfo = "";
+                                        
                                         if (weatherList != null)
                                         {
                                             if (weatherList.Count > 0 && weatherList[0].time != null)
                                             {
+                                                string[] strComment = new string[3];
+                                                string weatherInfo = "";
                                                 DButil.HistoryLog("*** SELECT weatherList : Exist | name : " + weatherList[0].time); 
                                                 for (int i = 0; i < 3; i++)
                                                 {
@@ -642,12 +642,10 @@ namespace PortChatBot
                                                 }
                                                 DButil.HistoryLog("*** weatherInfo : " + weatherInfo);
                                                 dlg.cardText = dlg.cardText.Replace("#weatherInfo", weatherInfo);
-                                                //DButil.HistoryLog("*** fullentity : " + fullentity);
                                             }
                                             else
                                             {
-                                                //fullentity = "userFail";
-                                                DButil.HistoryLog("*** weatherInfo : NO weatherList !");
+                                                DButil.HistoryLog("*** [ERROR] weatherInfo : NO weatherList !");
                                             }
                                         }
                                         else
@@ -655,13 +653,11 @@ namespace PortChatBot
                                             //  날씨 정보 없는 경우..
                                             dlg.cardText = "There is no weather information for that day.";
                                         }
-                                        //DButil.HistoryLog("*** HH : "+DateTime.Now.ToString("HH"));
                                     }
 
                                     //  Accident History
                                     if (dlg.cardTitle.Equals("Accident History"))
                                     {
-                                        DButil.HistoryLog("*** Accident History");
                                         string strWorkerId = "";
                                         string strAccidentRecord = "";
                                         string[] strComment = orgMent.Split('\'');
@@ -685,7 +681,7 @@ namespace PortChatBot
                                                 DButil.HistoryLog("*** SELECT hrList : Exist | name : " + hrList[0].name + "| accident_record : " + hrList[0].accident_record);
                                                 if (hrList.Count > 0 && hrList[0].accident_record != "" && hrList[0].accident_record != null) 
                                                 {
-                                                    DButil.HistoryLog("*** Accident History - SelectHrInfo : YY " + hrList[0].accident_record);
+                                                    DButil.HistoryLog("*** Accident History - SelectHrInfo : YES " + hrList[0].accident_record);
                                                     dlg.cardText = hrList[0].name + "(" + hrList[0].workerid + ") : " + dlg.cardText.Replace("#accidentHistory", hrList[0].accident_record);
                                                 }
                                                 else
