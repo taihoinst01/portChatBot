@@ -36,6 +36,8 @@ namespace PortChatBot
         const string chatBotAppID = "appID";
         public static int appID = Convert.ToInt32(rootWebConfig.ConnectionStrings.ConnectionStrings[chatBotAppID].ToString());
 
+        public static string subscriptionKey = "353c57887e05492485845aa47759c25b";
+
         //config 변수 선언
         static public string[] LUIS_NM = new string[10];        //루이스 이름
         static public string[] LUIS_APP_ID = new string[10];    //루이스 app_id
@@ -311,6 +313,9 @@ namespace PortChatBot
                     else
                     {
                         Debug.WriteLine("* NO bannedMsg !");
+                        Debug.WriteLine("* DetectLang !");
+                        //DetectLang(orgMent);
+
                         queryStr = orgMent;
                         //인텐트 엔티티 검출
                         //캐시 체크
@@ -478,6 +483,7 @@ namespace PortChatBot
 
                         if (relationList != null)
                         {
+                            DButil.HistoryLog("* relationList is NOT NULL !");
                             if (relationList.Count > 0 && relationList[0].dlgApiDefine != null)
                             {
                                 if (relationList[0].dlgApiDefine.Equals("api testdrive"))
@@ -498,11 +504,15 @@ namespace PortChatBot
                                 }
                                 DButil.HistoryLog("relationList[0].dlgApiDefine : " + relationList[0].dlgApiDefine);
                             }
+                            else
+                            {
+                                DButil.HistoryLog("* relationList is NOT NULL ! && relationList.Count : 0 | apiFlag : "+ apiFlag);
+                            }
 
                         }
                         else
                         {
-                            DButil.HistoryLog("relationList is NULL");
+                            DButil.HistoryLog("* relationList is NULL");
                             if (MessagesController.cacheList.luisIntent == null || apiFlag.Equals("COMMON"))
                             {
                                 apiFlag = "";
@@ -938,10 +948,10 @@ namespace PortChatBot
                                 }
                             }
                         }
-
-                        /*
+                        
                         else
                         {
+                            DButil.HistoryLog("* relationList.Count : " + relationList.Count);
                             string newUserID = activity.Conversation.Id;
                             string beforeUserID = "";
                             string beforeMessgaeText = "";
@@ -1161,7 +1171,7 @@ namespace PortChatBot
                                 replyresult = "D";
                             }
                         }
-                        */
+                        
 
                         DateTime endTime = DateTime.Now;
                         //analysis table insert
@@ -1219,6 +1229,7 @@ namespace PortChatBot
 
                     DateTime endTime = DateTime.Now;
                     int dbResult = db.insertUserQuery();
+                    Debug.WriteLine("* insertHistory 2");
                     db.insertHistory(activity.Conversation.Id, activity.ChannelId, ((endTime - MessagesController.startTime).Milliseconds));
                     replyresult = "";
                     recommendResult = "";
@@ -1322,5 +1333,49 @@ namespace PortChatBot
             };
             return heroCard.ToAttachment();
         }
+
+        /*
+        public async Task DetectLang(string strMsg)
+        {
+            Debug.WriteLine("***** DetectLang | strMsg : " + strMsg + " | subscriptionKey : " + subscriptionKey.Trim());
+            
+            var authTokenSource = new AzureAuthToken(subscriptionKey.Trim());
+            string authToken;
+            try
+            {
+                authToken = await authTokenSource.GetAccessTokenAsync();
+                Debug.WriteLine("***** DetectLang | authToken : " + authToken);
+            }
+            catch (HttpRequestException)
+            {
+                if (authTokenSource.RequestStatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Debug.WriteLine("Request to token service is not authorized (401). Check that the Azure subscription key is valid.");
+                    return;
+                }
+                if (authTokenSource.RequestStatusCode == HttpStatusCode.Forbidden)
+                {
+                    Debug.WriteLine("Request to token service is not authorized (403). For accounts in the free-tier, check that the account quota is not exceeded.");
+                    return;
+                }
+                throw;
+            }
+            
+            string uri = "https://api.microsofttranslator.com/v2/Http.svc/Detect?text=" + strMsg;
+            Debug.WriteLine("***** DetectLang | uri : " + uri);
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+
+            httpWebRequest.Headers.Add("Authorization", authToken);
+            using (WebResponse response = httpWebRequest.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            {
+                System.Runtime.Serialization.DataContractSerializer dcs = new System.Runtime.Serialization.DataContractSerializer(Type.GetType("System.String"));
+                string languageDetected = (string)dcs.ReadObject(stream);
+                Debug.WriteLine(string.Format("Language detected:{0}", languageDetected));
+            }
+            
+        }
+        */
+
     }
 }

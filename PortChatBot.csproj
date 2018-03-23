@@ -130,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AzureAuthToken.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="DB\DbConnect.cs" />
     <Compile Include="DB\DButil.cs" />
