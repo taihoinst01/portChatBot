@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
-namespace PortChatBot.Models
+namespace airportChatBot.Models
 {
 	public class SorryMessageList
 	{
