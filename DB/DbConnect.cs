@@ -1,5 +1,5 @@
-﻿using PortChatBot.Dialogs;
-using PortChatBot.Models;
+﻿using airportChatBot.Dialogs;
+using airportChatBot.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Configuration;
 
-namespace PortChatBot.DB
+namespace airportChatBot.DB
 {
     public class DbConnect
     {
@@ -498,17 +498,6 @@ namespace PortChatBot.DB
 
                 cmd.Parameters.AddWithValue("@msg", orgMent);
                 rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-                
-                /*
-                if (rdr.Read())
-                {
-                    Debug.WriteLine("* YES - TBL_QUERY_ANALYSIS_RESULT");
-                }
-                else
-                {
-                    Debug.WriteLine("* NO - TBL_QUERY_ANALYSIS_RESULT");
-                }
-                */
 
                 while (rdr.Read())
                 {
@@ -517,14 +506,12 @@ namespace PortChatBot.DB
                     string entitiesId = rdr["LUIS_ENTITIES"] as String;
                     string luisScore = rdr["LUIS_INTENT_SCORE"] as String;
                     
+
                     result.luisId = luisId;
                     result.luisIntent = intentId;
                     result.luisEntities = entitiesId;
                     result.luisScore = luisScore;
-
-                    Debug.WriteLine("Yes rdr | intentId : " + intentId + " | entitiesId : "+ entitiesId + " | luisScore : " + luisScore);
                 }
-
             }
             return result;
         }
@@ -1083,7 +1070,6 @@ namespace PortChatBot.DB
                     cmd.CommandText += "SELECT RESULT AS ENTITIES FROM FN_ENTITY_ORDERBY_ADD(@kr_query) ";
 
                     cmd.Parameters.AddWithValue("@kr_query", query);
-                    Debug.WriteLine("* SearchCommonEntities (CommandText : " + cmd.CommandText + ")");
 
                     rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                     //int count = 0;
@@ -1103,209 +1089,5 @@ namespace PortChatBot.DB
                 return entityarr;
             }
         }
-
-        public String SelectUserHistoryComment(string userNumber, string chatbotCommentCode)
-        {
-            // userNumber, chatbotCommentCode
-            string resultComment = "";
-            SqlDataReader rdr = null;
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = conn;
-
-                cmd.CommandText += "	SELECT ";
-                cmd.CommandText += "        TOP 1 ISNULL(CUSTOMER_COMMENT_KR, '') AS COMMENT ";
-                cmd.CommandText += "        FROM TBL_HISTORY_QUERY";
-                cmd.CommandText += " 	WHERE USER_NUMBER = '" + userNumber + "' AND CHATBOT_COMMENT_CODE = '" + chatbotCommentCode + "'";
-                cmd.CommandText += "    ORDER BY SID DESC";
-                cmd.Parameters.AddWithValue("@userNumber", userNumber);
-                cmd.Parameters.AddWithValue("@chatbotCommentCode", chatbotCommentCode);
-
-                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-                while (rdr.Read())
-                {
-                    resultComment = rdr["COMMENT"] as string;
-
-                }
-
-                //resultComment = newComment;
-            }
-
-            return resultComment;
-        }
-
-        public List<HrList> SelectHrInfo(string workerId)
-        {
-            SqlDataReader rdr = null;
-            List<HrList> result = new List<HrList>();
-            DButil.HistoryLog("* SelectHrInfo start: ");
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = conn;
-                DButil.HistoryLog("* SelectHrInfo commandText start: ");
-                cmd.CommandText += "	SELECT ";
-                cmd.CommandText += "        TMN_COD, WORKERID, NAME, EQP_TYP, EQP_TYP_NAME, EQUIPMENT_NO, ACCIDENT_RECORD, TRAINING_RECORD, AGE, VACATION, EYE_SIGHT_LEFT, EYE_SIGHT_RIGHT";
-                cmd.CommandText += "        FROM PORT_HR";
-                cmd.CommandText += " 	WHERE WORKERID = '" + workerId + "' OR NAME = '"+ workerId + "' ";
-                cmd.Parameters.AddWithValue("@workerId", workerId);
-
-                Debug.WriteLine("* SelectHrInfo() CommandText : " + cmd.CommandText);
-                DButil.HistoryLog("* SelectHrInfo : " + cmd.CommandText);
-                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-                while (rdr.Read())
-                {
-                    HrList hrList = new HrList();
-                    hrList.tmn_cod = rdr["TMN_COD"] as string;
-                    //hrList.comp = rdr["COMP"] as string;
-                    //hrList.part = rdr["PART"] as string;
-                    hrList.workerid = rdr["WORKERID"] as string;
-                    hrList.name = rdr["NAME"] as string;
-                    hrList.eqp_typ = rdr["EQP_TYP"] as string;
-                    hrList.eqp_typ_name = rdr["EQP_TYP_NAME"] as string;
-                    hrList.equipment_no = rdr["EQUIPMENT_NO"] as string;
-                    hrList.accident_record = rdr["ACCIDENT_RECORD"] as string;
-                    hrList.training_record = rdr["TRAINING_RECORD"] as string;
-                    hrList.age = rdr["AGE"] as string;
-                    hrList.vacation = rdr["VACATION"] as string;
-                    hrList.eye_sight_left = rdr["EYE_SIGHT_LEFT"] as string;
-                    hrList.eye_sight_right = rdr["EYE_SIGHT_RIGHT"] as string;
-                    result.Add(hrList);
-                }
-
-                return result;
-            }
-
-        }
-
-        public List<AnalysisList> SelectAnalysisInfo(string tmnCod, string eqpTypNam)
-        {
-            SqlDataReader rdr = null;
-            List<AnalysisList> result = new List<AnalysisList>();
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = conn;
-
-                cmd.CommandText += "    SELECT ";
-                cmd.CommandText += "        TMN_COD, EQP_TYP, EQP_TYP_NAME, ACCIDENTTYPE, FACTOR1, FACTOR2, FACTOR3, ANALYSIS ";
-                cmd.CommandText += "        FROM PORT_ACCIDENT_ANALYSIS ";
-                cmd.CommandText += " 	WHERE TMN_COD = '" + tmnCod + "' AND EQP_TYP_NAME = '" + eqpTypNam + "'";
-                cmd.Parameters.AddWithValue("@tmnCod", tmnCod);
-                cmd.Parameters.AddWithValue("@eqpTypNam", eqpTypNam);
-
-                Debug.WriteLine("* SelectAnalysisInfo() CommandText : " + cmd.CommandText);
-                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-                while (rdr.Read())
-                {
-                    AnalysisList analysisList = new AnalysisList();
-                    analysisList.tmn_cod = rdr["TMN_COD"] as string;
-                    analysisList.eqp_typ = rdr["EQP_TYP"] as string;
-                    analysisList.eqp_typ_name = rdr["EQP_TYP_NAME"] as string;
-                    analysisList.accidenttype = rdr["ACCIDENTTYPE"] as string;
-                    analysisList.factor1 = rdr["FACTOR1"] as string;
-                    analysisList.factor2 = rdr["FACTOR2"] as string;
-                    analysisList.factor3 = rdr["FACTOR3"] as string;
-                    analysisList.analysis = rdr["ANALYSIS"] as string;
-                    result.Add(analysisList);
-                }
-
-                return result;
-            }
-        }
-
-         
-
-
-        public List<TrendList> SelectTrendInfo(string eqpTyp)
-        {
-            SqlDataReader rdr = null;
-            List<TrendList> result = new List<TrendList>();
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = conn;
-                /*
-                cmd.CommandText += "	SELECT ";
-                cmd.CommandText += "        YEAR, MONTH, EQP_TYP, ACCIDENTTYPE, COUNT ";
-                cmd.CommandText += "        FROM PORT_ACCIDENT_TREND ";
-                cmd.CommandText += " 	WHERE EQP_TYP = '" + eqpTyp + "' ";
-                cmd.Parameters.AddWithValue("@eqpTyp", eqpTyp);
-                */
-                //select ACCIDENTTYPE, SUM(COUNT) AS countSum from PORT_ACCIDENT_TREND group by ACCIDENTTYPE ORDER BY countSum DESC
-                cmd.CommandText += "    SELECT ACCIDENTTYPE, SUM(COUNT) AS COUNTSUM ";
-                cmd.CommandText += "        FROM PORT_ACCIDENT_TREND ";
-                cmd.CommandText += "        GROUP BY ACCIDENTTYPE ORDER BY COUNTSUM DESC ";
-
-                Debug.WriteLine("* SelectTrendInfo() CommandText : " + cmd.CommandText);
-                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-                while (rdr.Read())
-                {
-                    TrendList trendList = new TrendList();
-                    //trendList.year = rdr["YEAR"] as string;
-                    //trendList.month = rdr["MONTH"] as string;
-                    //trendList.eqp_typ = rdr["EQP_TYP"] as string;
-                    trendList.accidenttype = rdr["ACCIDENTTYPE"] as string;
-                    trendList.count = Convert.ToInt32(rdr["COUNTSUM"]);
-                    result.Add(trendList);
-                }
-
-                return result;
-
-            }
-        }
-
-        public List<WeatherList> SelectWeatherInfo(string strTime)
-        {
-            SqlDataReader rdr = null;
-            List<WeatherList> result = new List<WeatherList>();
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = conn;
-                cmd.CommandText += " SELECT TOP 3 * FROM (";
-                cmd.CommandText += "    SELECT  TIME, TEMP, RAINFALL, WIND, HUMIDITY, ERNAM ";
-                cmd.CommandText += "        FROM PORT_WEATHER "; 
-                cmd.CommandText += "    WHERE TIME > '" + strTime + "'";
-                cmd.CommandText += " ) t1 ";
-                cmd.Parameters.AddWithValue("@strTime", strTime);
-
-                Debug.WriteLine("* SelectWeatherInfo() CommandText : " + cmd.CommandText);
-
-                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
-                while (rdr.Read())
-                {
-                    WeatherList weatherList = new WeatherList();
-                    weatherList.time = rdr["TIME"] as string;
-                    weatherList.temp = rdr["TEMP"] as string;
-                    weatherList.rainfall = rdr["RAINFALL"] as string;
-                    weatherList.wind = rdr["WIND"] as string;
-                    weatherList.humidity = rdr["HUMIDITY"] as string;
-                    weatherList.ernam = rdr["ERNAM"] as string;
-                    
-                    result.Add(weatherList);
-                }
-
-                return result;
-            }
-
-        }
-
-
     }
 }
