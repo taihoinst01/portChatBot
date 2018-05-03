@@ -5,6 +5,7 @@ using System.Web;
 
 namespace PortChatBot.Models
 {
+    [Serializable]
     public class QueryIntentList
     {
         public string luisId;
