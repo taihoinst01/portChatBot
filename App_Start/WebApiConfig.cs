@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace JuiceChatBot
+namespace PortChatBot
 {
     public static class WebApiConfig
     {
