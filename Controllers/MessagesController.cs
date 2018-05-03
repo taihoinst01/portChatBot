@@ -541,7 +541,7 @@ namespace PortChatBot
                             {
                                 apiFlag = "QUOT";
                             }
-                            DButil.HistoryLog("apiFlag : "+ apiFlag);
+                            //DButil.HistoryLog("apiFlag : "+ apiFlag);
                         }
 
                         
