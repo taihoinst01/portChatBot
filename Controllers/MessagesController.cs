@@ -979,7 +979,7 @@ namespace PortChatBot
                             //string messgaeText = "";
 
                             Activity intentNoneReply = activity.CreateReply();
-                            Boolean sorryflag = false;
+                            Boolean sorryflag = true;
 
 
                             if (beforeUserID != newUserID)
@@ -1002,7 +1002,6 @@ namespace PortChatBot
                             DialogList dlg = db.SelectDialog(queryIntentList.dlgId);
                             Activity commonReply = activity.CreateReply();
                             Attachment tempAttachment = new Attachment();
-                            Debug.WriteLine("dlg.dlgType : " + dlg.dlgType);
  
                             Debug.WriteLine("dlg.dlgType : " + dlg.dlgType + " | dlg.cardText : "+ dlg.cardText);
                             intentNoneReply.Attachments = new List<Attachment>();
@@ -1019,9 +1018,19 @@ namespace PortChatBot
                             };
                             var attachment = card.ToAttachment();
                             intentNoneReply.Attachments.Add(attachment);
-                            sorryflag = true;
-                            SetActivity(intentNoneReply);
-                            replyresult = "S";
+
+                            if(dlg.cardText != "" && dlg.cardText != null)
+                            {
+                                Debug.WriteLine("* dlg.cardText : " + dlg.cardText);
+                                sorryflag = false;
+                                SetActivity(intentNoneReply);
+                                replyresult = "S";
+                            }
+                            else
+                            {
+                                sorryflag = true;
+                            }
+                            Debug.WriteLine("* sorryflag : " + sorryflag);
                             
 
                             /*
@@ -1187,10 +1196,11 @@ namespace PortChatBot
 
                             if (sorryflag)
                             {
+                                Debug.WriteLine("* SORRY Flag True");
                                 //Sorry Message 
                                 int sorryMessageCheck = db.SelectUserQueryErrorMessageCheck(activity.Conversation.Id, MessagesController.chatBotID);
 
-                                ++MessagesController.sorryMessageCnt;
+                                //++MessagesController.sorryMessageCnt;
 
                                 Activity sorryReply = activity.CreateReply();
 
@@ -1199,6 +1209,7 @@ namespace PortChatBot
                                 sorryReply.Attachments = new List<Attachment>();
                                 sorryReply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
 
+                                Debug.WriteLine("* SORRY Flag sorryMessageCheck : "+ sorryMessageCheck);
                                 List<TextList> text = new List<TextList>();
                                 if (sorryMessageCheck == 0)
                                 {
@@ -1208,7 +1219,7 @@ namespace PortChatBot
                                 {
                                     text = db.SelectSorryDialogText("6");
                                 }
-
+                                Debug.WriteLine("* SORRY Flag True | text : "+text);
                                 for (int i = 0; i < text.Count; i++)
                                 {
                                     HeroCard plCard = new HeroCard()
