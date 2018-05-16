@@ -330,9 +330,13 @@ namespace PortChatBot
                         {
                             DButil.HistoryLog("cache none : " + orgMent);
                             Debug.WriteLine("cache none : " + orgMent);
-                            //루이스 체크
-                            cacheList.luisId = dbutil.GetMultiLUIS(orgMent);
-                            Debug.WriteLine("cacheList.luisId : " + cacheList.luisId);
+                            //루이스 체크(intent를 루이스를 통해서 가져옴)
+                            //cacheList.luisId = dbutil.GetMultiLUIS(orgMent);
+                            //Debug.WriteLine("cacheList.luisId : " + cacheList.luisId);
+
+                            cacheList.luisIntent = dbutil.GetMultiLUIS(orgMent);
+                            Debug.WriteLine("cacheList.luisIntent : " + cacheList.luisIntent);
+                            cacheList = db.CacheDataFromIntent(cacheList.luisIntent);
 
 
                         }
@@ -463,6 +467,7 @@ namespace PortChatBot
                         DButil.HistoryLog("fullentity : " + fullentity);
                         if (!string.IsNullOrEmpty(fullentity) || !fullentity.Equals(""))
                         {
+                            
                             //  fullentity 있는 경우..
                             if (!String.IsNullOrEmpty(luisEntities))
                             {
@@ -472,19 +477,24 @@ namespace PortChatBot
                                 {
                                     //DButil.HistoryLog("fullentity : " + fullentity + " | luisEntities : " + luisEntities);
                                     //DefineTypeChkSpare에서는 인텐트나 루이스아이디조건 없이 엔티티만 일치하면 다이얼로그 리턴
-                                    relationList = db.DefineTypeChkSpare(fullentity);
+                                    //relationList = db.DefineTypeChkSpare(fullentity);
+                                    relationList = db.DefineTypeChkSpare(luisIntent);
                                 }
                                 else
                                 {
-                                    //DButil.HistoryLog("fullentity : " + fullentity);
+                                    //DButil.HistoryLog("luisIntent : " + luisIntent);
                                     relationList = db.DefineTypeChk(MessagesController.luisId, MessagesController.luisIntent, MessagesController.luisEntities);
                                 }
                             }
                             else
                             {
                                 DButil.HistoryLog("fullentity : " + fullentity + " | luisEntities : " + luisEntities + "| luisIntent : N " + luisIntent);
-                                relationList = db.DefineTypeChkSpare(fullentity);
+                                //relationList = db.DefineTypeChkSpare(fullentity);
+                                relationList = db.DefineTypeChkSpare(luisIntent);
                             }
+                            
+                            //DButil.HistoryLog("luisid : " + luisId + " | luisintent : " + luisIntent + "| luisEntities : " + luisEntities);
+                            //relationList = db.DefineTypeChk(luisId, luisIntent, luisEntities);
                         }
                         else
                         {
@@ -676,12 +686,14 @@ namespace PortChatBot
                                             else
                                             {
                                                 DButil.HistoryLog("*** [ERROR] weatherInfo : NO weatherList !");
+                                                dlg.cardText = dlg.cardText.Replace("#weatherInfo", "There is no weather information for that day.");
                                             }
                                         }
                                         else
                                         {   
                                             //  날씨 정보 없는 경우..
-                                            dlg.cardText = "There is no weather information for that day.";
+                                            //dlg.cardText = "There is no weather information for that day.";
+                                            dlg.cardText = dlg.cardText.Replace("#weatherInfo", "There is no weather information for that day.");
                                         }
                                     }
 

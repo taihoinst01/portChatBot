@@ -91,13 +91,21 @@ namespace PortChatBot.DB
 
                 string luisEntities = "";
                 string luisType = "";
-
+                string luisIntent = "";
+                if(MAX > 0)
+                {
+                    LuisName = returnLuisName[0];
+                    Luis = Luis_before[0];
+                }
+                
                 if (!String.IsNullOrEmpty(LuisName))
                 {
                     if (Luis != null || Luis.Count > 0)
                     {
                         float luisScore = (float)Luis["intents"][0]["score"];
                         int luisEntityCount = (int)Luis["entities"].Count();
+
+                        luisIntent = Luis["topScoringIntent"]["intent"].ToString();//add
 
                         if (MessagesController.relationList != null)
                         {
@@ -148,7 +156,8 @@ namespace PortChatBot.DB
                     //MessagesController.cacheList.luisEntities = LuisName;
 
                 }
-                return LuisName;
+                //return LuisName;
+                return luisIntent;
             }
             catch (System.Exception e)
             {
@@ -163,8 +172,8 @@ namespace PortChatBot.DB
 
             query = Uri.EscapeDataString(query);
 
-            //string url = string.Format("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/{0}?subscription-key={1}&timezoneOffset=0&verbose=true&q={2}", luis_app_id, luis_subscription, query);
-            string url = string.Format("https://southeastasia.api.cognitive.microsoft.com/luis/v2.0/apps/{0}?subscription-key={1}&timezoneOffset=0&verbose=true&q={2}", luis_app_id, luis_subscription, query);
+            string url = string.Format("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/{0}?subscription-key={1}&timezoneOffset=0&verbose=true&q={2}", luis_app_id, luis_subscription, query);
+            //string url = string.Format("https://southeastasia.api.cognitive.microsoft.com/luis/v2.0/apps/{0}?subscription-key={1}&timezoneOffset=0&verbose=true&q={2}", luis_app_id, luis_subscription, query);
 
             Debug.WriteLine("LUIS URL : " + url);
 

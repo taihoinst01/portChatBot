@@ -527,6 +527,51 @@ namespace PortChatBot.DB
             return result;
         }
 
+        public CacheList CacheDataFromIntent(string intent)
+        {
+            SqlDataReader rdr = null;
+            CacheList result = new CacheList();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandText += "SELECT LUIS_ID, LUIS_INTENT, LUIS_ENTITIES, '' AS LUIS_INTENT_SCORE FROM TBL_DLG_RELATION_LUIS WHERE LUIS_INTENT=@intent";
+
+                cmd.Parameters.AddWithValue("@intent", intent);
+                rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                /*
+                if (rdr.Read())
+                {
+                    Debug.WriteLine("* YES - TBL_QUERY_ANALYSIS_RESULT");
+                }
+                else
+                {
+                    Debug.WriteLine("* NO - TBL_QUERY_ANALYSIS_RESULT");
+                }
+                */
+
+                while (rdr.Read())
+                {
+                    string luisId = rdr["LUIS_ID"] as String;
+                    string intentId = rdr["LUIS_INTENT"] as String;
+                    string entitiesId = rdr["LUIS_ENTITIES"] as String;
+                    string luisScore = rdr["LUIS_INTENT_SCORE"] as String;
+
+                    result.luisId = luisId;
+                    result.luisIntent = intentId;
+                    result.luisEntities = entitiesId;
+                    result.luisScore = luisScore;
+
+                    Debug.WriteLine("Yes rdr | intentId : " + intentId + " | entitiesId : " + entitiesId + " | luisScore : " + luisScore);
+                }
+
+            }
+            return result;
+        }
+
         public QueryIntentList SelectQueryIntent(string orgMent)
         {
             SqlDataReader rdr = null;
@@ -576,9 +621,9 @@ namespace PortChatBot.DB
                 cmd.Connection = conn;
                 cmd.CommandText += "SELECT LUIS_ID, LUIS_INTENT, LUIS_ENTITIES, ISNULL(DLG_ID,0) AS DLG_ID, DLG_API_DEFINE, API_ID ";
                 cmd.CommandText += "  FROM TBL_DLG_RELATION_LUIS                                                    ";
-                cmd.CommandText += " WHERE 1=1                                               ";
-                //cmd.CommandText += " WHERE LUIS_INTENT = @intentId                                                 ";
-                cmd.CommandText += "   AND LUIS_ENTITIES = @entities                                                ";
+                //cmd.CommandText += " WHERE 1=1                                               ";
+                cmd.CommandText += " WHERE LUIS_INTENT = @intentId                                                 ";
+                //cmd.CommandText += "   AND LUIS_ENTITIES = @entities                                                ";
                 //cmd.CommandText += "   AND LUIS_ID = @luisId                                                        ";
 
                 if(intentId != null){
@@ -634,10 +679,12 @@ namespace PortChatBot.DB
                 cmd.Connection = conn;
                 cmd.CommandText += "SELECT  LUIS_ID, LUIS_INTENT, LUIS_ENTITIES, ISNULL(DLG_ID,0) AS DLG_ID, DLG_API_DEFINE, API_ID ";
                 cmd.CommandText += "  FROM  TBL_DLG_RELATION_LUIS                                                    ";
-                cmd.CommandText += " WHERE  LUIS_ENTITIES = @entities                                                ";
+                //cmd.CommandText += " WHERE  LUIS_ENTITIES = @entities                                                ";
+                cmd.CommandText += " WHERE  LUIS_INTENT = @intentId                                                ";
+                
 
                 Debug.WriteLine("query : " + cmd.CommandText);
-                cmd.Parameters.AddWithValue("@entities", entity);
+                cmd.Parameters.AddWithValue("@intentId", entity);
 
                 rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 while (rdr.Read())
